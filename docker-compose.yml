@@ -1,0 +1,33 @@
+version: '3.8'
+
+networks:
+  simple-commerce-bridge-network:  # ✅ Define a custom bridge network
+
+services:
+  simple-commerce-postgres:
+    image: postgres
+    restart: always
+    networks:
+      - simple-commerce-bridge-network
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: simplecommercedb
+    ports:
+      - "5432"
+
+  simple-commerce-backend-app:
+    build: .
+    restart: always
+    networks:
+      - simple-commerce-bridge-network
+    depends_on:
+      - simple-commerce-postgres
+    environment:
+      DATABASE_HOST: simple-commerce-postgres  # ✅ Use service name
+      DATABASE_PORT: 5432
+      DATABASE_USER: user
+      DATABASE_PASSWORD: password
+      DATABASE_NAME: simplecommercedb
+    ports:
+      - "3000:3000"
