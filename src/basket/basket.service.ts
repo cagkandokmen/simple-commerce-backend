@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/sequelize';
 import { Basket } from "./basket.entity";
 import { ProductService } from "../product/product.service";
+import { Product } from "src/product/product.entity";
 
 @Injectable()
 export class BasketService{
@@ -14,8 +15,9 @@ export class BasketService{
     async getBasket(userid: string) {
         try{
             return this.basket.findAll({
-              where: { userid },
-            });
+                where: { userid },
+                include: [Product],
+              });
         }catch(error){
             throw new HttpException(
                 `Database error: ${error.message}`,
@@ -38,11 +40,10 @@ export class BasketService{
               );
         };
     }
-    async deleteItem(userId:string, productId:string):Promise<Number>{
+    async deleteItem(userId:string, id:number):Promise<Number>{
         try{
-            await this.checkProductState(productId);
             return await this.basket.destroy({
-                where :{userid : userId,productid:productId}
+                where :{userid : userId,id:id}
             });
         }catch(error){
             throw new HttpException(

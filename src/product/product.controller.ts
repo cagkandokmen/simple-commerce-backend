@@ -6,18 +6,18 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get('/products')
-  getAllProducts(){
-    return this.productService.getAllProducts();
+  async getAllProducts(){
+    return await this.productService.getAllProducts();
   }
 
   @Post()
-  addProduct(@Body() product):void{
-    this.productService.addProduct(product);
+  async addProduct(@Body() product){
+    return await this.productService.addProduct(product);
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string):void{
-    this.productService.deleteProduct(id);
+  async deleteProduct(@Param('id') id: string){
+    return await this.productService.deleteProduct(id);
   }
 
 }

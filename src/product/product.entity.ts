@@ -19,4 +19,10 @@ export class Product extends Model<Product> {
     allowNull: false,
   })
   type: string;
+
+  @Column({
+    type: DataType.CHAR(100),
+    allowNull: false,
+  })
+  imagePath: string;
 }

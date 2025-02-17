@@ -17,9 +17,9 @@ export class BasketController{
     async addItemToBasket(@Param('userid') userId:string, @Body() {productId}){
         return this.basketService.addItemToBasket(userId, productId);
     }
-    @Delete(':userid/product/:productid')
+    @Delete(':userid/:id')
     async deleteProduct(@Param('userid') userId: string, 
-        @Param('productid') prodductId: string){
-        this.basketService.deleteItem(userId, prodductId);
+        @Param('id') id: number){
+        this.basketService.deleteItem(userId, id);
     }
 }

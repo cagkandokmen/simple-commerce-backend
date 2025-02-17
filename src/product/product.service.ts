@@ -13,7 +13,7 @@ export class ProductService{
     getAllProducts(){
         try{
             return this.productModel.findAll({
-                attributes: ['id', 'name', 'type'], 
+                attributes: ['id', 'name', 'type', 'imagePath'], 
              });
         }catch(error){
             throw new HttpException(
@@ -28,7 +28,8 @@ export class ProductService{
             return await this.productModel.create({
                 id: productItem.id, 
                 name: productItem.name, 
-                type:productItem.type
+                type:productItem.type,
+                imagePath:productItem.imagePath
               } as Product);
         }catch(error){
             throw new HttpException(
@@ -44,10 +45,16 @@ export class ProductService{
                 where :{id : id}
             });
         }catch(error){
-            throw new HttpException(
-                `Database error: ${error.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            if(error?.parent?.code =="23503")
+                throw new HttpException(
+                    `This product is in some baskets. You can not delete it.`,
+                    HttpStatus.BAD_REQUEST
+                );
+            else    
+                throw new HttpException(
+                    `Database error: ${JSON.stringify(error)} - ${error.message}`,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                );
         };
     }
 
