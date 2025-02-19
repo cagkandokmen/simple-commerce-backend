@@ -1,5 +1,6 @@
 import { Controller, Body, Get, Param, Post, Delete } from '@nestjs/common';
 import { ProductService } from './product.service';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('product')
 export class ProductController {
@@ -11,11 +12,13 @@ export class ProductController {
   }
 
   @Post()
+  @Roles("admin")
   async addProduct(@Body() product){
     return await this.productService.addProduct(product);
   }
 
   @Delete(':id')
+  @Roles("admin")
   async deleteProduct(@Param('id') id: string){
     return await this.productService.deleteProduct(id);
   }

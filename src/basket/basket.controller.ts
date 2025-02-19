@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Delete, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Delete, Param, Post, Request } from "@nestjs/common";
 import { BasketService } from "./basket.service";
 import { ProductService } from "../product/product.service";
 
@@ -8,18 +8,17 @@ export class BasketController{
         private readonly productService: ProductService,
     ) {}
 
-    @Get(':userid')
-    async getBasket(@Param('userid') userId:string){
-        return await this.basketService.getBasket(userId);
+    @Get()
+    async getBasket(@Request() req){
+        return await this.basketService.getBasket(req.user.username);
     }
 
-    @Post(':userid')
-    async addItemToBasket(@Param('userid') userId:string, @Body() {productId}){
-        return this.basketService.addItemToBasket(userId, productId);
+    @Post()
+    async addItemToBasket(@Request() req, @Body() {productId}){
+        return this.basketService.addItemToBasket(req.user.username, productId);
     }
-    @Delete(':userid/:id')
-    async deleteProduct(@Param('userid') userId: string, 
-        @Param('id') id: number){
-        this.basketService.deleteItem(userId, id);
+    @Delete(':id')
+    async deleteProduct(@Request() req, @Param('id') id: number){
+        this.basketService.deleteItem(req.user.username, id);
     }
 }

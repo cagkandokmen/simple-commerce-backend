@@ -11,13 +11,13 @@ export class Basket extends Model<Basket> {
   id: number;
 
   @Column({
-    type: DataType.CHAR(20),
+    type: DataType.STRING(20),
     allowNull: false,
   })
   userid: string;
 
   @Column({
-    type: DataType.CHAR(20),
+    type: DataType.STRING(20),
     allowNull: false,
   })
   @ForeignKey(() => Product)
