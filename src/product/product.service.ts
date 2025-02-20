@@ -2,6 +2,8 @@ import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/sequelize';
 import { Product } from "./product.entity";
 import { ProductDto } from "./dto/ProductDto";
+import { DatabaseException } from "src/exceptionhandling/DatabaseException";
+import { BadRequestException } from "src/exceptionhandling/BadRequestException";
 
 @Injectable()
 export class ProductService{
@@ -17,10 +19,7 @@ export class ProductService{
                 attributes: ['id', 'name', 'type', 'imagePath'], 
              });
         }catch(error){
-            throw new HttpException(
-                `Database error: ${error.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-              );
+            throw new DatabaseException(error.message);
         };
     }
 
@@ -39,10 +38,7 @@ export class ProductService{
                 imagePath:p.imagePath
             };
         }catch(error){
-            throw new HttpException(
-                    `Database error: ${error.message}`,
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            throw new DatabaseException(error.message);
         };
     }
 
@@ -53,15 +49,9 @@ export class ProductService{
             });
         }catch(error){
             if(error?.parent?.code =="23503")
-                throw new HttpException(
-                    `This product is in some baskets. You can not delete it.`,
-                    HttpStatus.BAD_REQUEST
-                );
-            else    
-                throw new HttpException(
-                    `Database error: ${JSON.stringify(error)} - ${error.message}`,
-                    HttpStatus.INTERNAL_SERVER_ERROR
-                );
+                throw new BadRequestException(`This product is in some baskets. You can not delete it.`);
+            else  
+                throw new DatabaseException(error.message);
         };
     }
 
@@ -71,10 +61,7 @@ export class ProductService{
                 where :{id : id}
             });
         }catch(error){
-            throw new HttpException(
-                `Database error: ${error.message}`,
-                    HttpStatus.INTERNAL_SERVER_ERROR
-                );
+            throw new DatabaseException(error.message);
         };
     }
 }

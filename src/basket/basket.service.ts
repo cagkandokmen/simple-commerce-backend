@@ -4,6 +4,8 @@ import { Basket } from "./basket.entity";
 import { ProductService } from "../product/product.service";
 import { Product } from "src/product/product.entity";
 import { BasketDto } from "./dto/BasketDto";
+import { DatabaseException } from "src/exceptionhandling/DatabaseException";
+import { BadRequestException } from "src/exceptionhandling/BadRequestException";
 
 @Injectable()
 export class BasketService{
@@ -32,10 +34,7 @@ export class BasketService{
                 }
             });
         }catch(error){
-            throw new HttpException(
-                `Database error: ${error.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            throw new DatabaseException(error.message);
         };
     }
 
@@ -52,10 +51,7 @@ export class BasketService{
                 product: undefined
             }
         }catch(error){
-            throw new HttpException(
-                `Database error: ${error.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-              );
+            throw new DatabaseException(error.message);
         };
     }
     async deleteItem(userId:string, id:number):Promise<Number>{
@@ -64,18 +60,14 @@ export class BasketService{
                 where :{userid : userId,id:id}
             });
         }catch(error){
-            throw new HttpException(
-                `Database error: ${error.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            throw new DatabaseException(error.message);
         };
     }
 
     async checkProductState(id:string){
         let p = await this.productService.findById(id);
         if(p == null)
-            throw new HttpException('Product is not defined...',
-                     HttpStatus.BAD_REQUEST); 
+            throw new BadRequestException('Product is not defined...'); 
     }
     
 }
