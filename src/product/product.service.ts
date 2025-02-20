@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from '@nestjs/sequelize';
 import { Product } from "./product.entity";
+import { ProductDto } from "./dto/ProductDto";
 
 @Injectable()
 export class ProductService{
@@ -23,14 +24,20 @@ export class ProductService{
         };
     }
 
-    async addProduct(productItem):Promise<Product>{
+    async addProduct(productItem: ProductDto):Promise<ProductDto>{
         try{    
-            return await this.productModel.create({
+            let p= await this.productModel.create({
                 id: productItem.id, 
                 name: productItem.name, 
                 type:productItem.type,
                 imagePath:productItem.imagePath
               } as Product);
+            return {
+                id: p.id, 
+                name: p.name, 
+                type:p.type,
+                imagePath:p.imagePath
+            };
         }catch(error){
             throw new HttpException(
                     `Database error: ${error.message}`,
@@ -66,8 +73,8 @@ export class ProductService{
         }catch(error){
             throw new HttpException(
                 `Database error: ${error.message}`,
-                HttpStatus.INTERNAL_SERVER_ERROR
-            );
+                    HttpStatus.INTERNAL_SERVER_ERROR
+                );
         };
     }
 }

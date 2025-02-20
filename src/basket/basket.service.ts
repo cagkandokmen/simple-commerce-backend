@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Basket } from "./basket.entity";
 import { ProductService } from "../product/product.service";
 import { Product } from "src/product/product.entity";
+import { BasketDto } from "./dto/BasketDto";
 
 @Injectable()
 export class BasketService{
@@ -14,10 +15,22 @@ export class BasketService{
 
     async getBasket(userid: string) {
         try{
-            return this.basket.findAll({
+            let basketList= await this.basket.findAll({
                 where: { userid },
                 include: [Product],
               });
+            return basketList.map(item =>{
+                return {
+                    id:item.id,
+                    productId: item.productid,
+                    product: {
+                        id:item.product.id,
+                        name: item.product.name,
+                        type: item.product.type,
+                        imagePath: item.product.imagePath,
+                    }
+                }
+            });
         }catch(error){
             throw new HttpException(
                 `Database error: ${error.message}`,
@@ -26,13 +39,18 @@ export class BasketService{
         };
     }
 
-    async addItemToBasket(userId:string, productId:string):Promise<Basket>{
+    async addItemToBasket(userId:string, productId:string):Promise<BasketDto>{
         try{
             await this.checkProductState(productId);
-            return await this.basket.create({
+            let item= await this.basket.create({
                 userid: userId, 
                 productid: productId, 
               } as Basket);
+            return {
+                id:item.id,
+                productId: item.productid,
+                product: undefined
+            }
         }catch(error){
             throw new HttpException(
                 `Database error: ${error.message}`,

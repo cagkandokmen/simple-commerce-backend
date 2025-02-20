@@ -16,3 +16,9 @@ In the project directory, you can run:
 ### `docker-compose up -d --build`
 
 **! It will run the nestjs in docker container and also create a postgre sql docker container  !**
+
+
+### Swagger UI 
+http://localhost:3000/api/docs 
+
+![circleci-image](./swagger.png)
